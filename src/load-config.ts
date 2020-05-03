@@ -15,7 +15,7 @@ const loadConfig = async (configPath: string): Promise<{[key: string]: any}> => 
   return readConfigPath(configPath)
 }
 
-const readConfigPath = async (configPath: string, dirName?: string): Promise<{}> => {
+const readConfigPath = async (configPath: string, dirName?: string): Promise<{[key: string]: any}> => {
   let files
 
   try {

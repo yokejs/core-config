@@ -1,0 +1,3 @@
+const getConfig = (path?: string) => {
+
+}

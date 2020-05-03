@@ -1,21 +1,30 @@
 import loadConfig from './load-config'
 import path from 'path'
 
-describe('loadConfig',  () => {
+describe('loadConfig', () => {
   it('throws an error if the config path cannot be found', async () => {
     expect.assertions(1)
 
     try {
-      await loadConfig()
+      await loadConfig('some/path/which/does/not/exist/config')
     } catch (e) {
-      expect(e.message).toEqual('Cannot find config directory')
+      expect(e.message).toEqual('Config directory "some/path/which/does/not/exist/config" does not exist.')
     }
   })
 
-  it('returns a merged config', async () => {
+  it('returns a merged config by recursively loading files starting at the given configPath', async () => {
     expect.assertions(1)
 
-    expect(await loadConfig(path.resolve(__dirname,'../config'))).toEqual({
+    expect(await loadConfig(path.resolve(__dirname, '../__tests__/config'))).toEqual({
+      cache: {
+        "redis": {
+          "cluster": true,
+          "default": {
+            "host": "127.0.0.1",
+            "port": 6379
+          }
+        }
+      },
       app: {
         name: "My application",
         env: "local",

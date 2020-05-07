@@ -560,6 +560,10 @@
   dependencies:
     "@types/yargs-parser" "*"
 
+"@yokejs/core-cache@git+ssh://git@github.com:/yokejs/core-cache#master":
+  version "0.0.1"
+  resolved "git+ssh://git@github.com:/yokejs/core-cache#41059651e15cf5a1320f229f48d8a832fe0f304b"
+
 abab@^2.0.0:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.3.tgz#623e2075e02eb2d3f2475e49f99c91846467907a"

@@ -48,7 +48,8 @@ You can view a full example [here](/example) with config keys and values.
 import CoreCache, {FileSystemCache} from '@yokejs/core-cache'
 import Config from '@yokejs/core-config'
 
-const cacheDirectory = './config'
+const configDirectory = path.resolve(__dirname, './config')
+const cacheDirectory = path.resolve(__dirname, './cache')
 
 const fileSystemCache = FileSystemCache({
   directory: cacheDirectory,
@@ -63,7 +64,7 @@ const config = Config({ configDirectory, cache: fileSystemCache })
 ```
 import Config from '@yokejs/core-config'
 
-const cacheDirectory = './config'
+const configDirectory = path.resolve(__dirname, './config')
 
 const config = Config({ configDirectory })
 ```

@@ -9,7 +9,7 @@ const readConfigPath = async (configDirectory: string, dirName?: string): Promis
   let files
 
   try {
-    files = await fsPromises.readdir(configDirectory, {withFileTypes: true})
+    files = await fsPromises.readdir(path.resolve(configDirectory), {withFileTypes: true})
   } catch (e) {
     throw new Error(`Unable to read config directory "${configDirectory}". ${e.message}`)
   }
@@ -73,7 +73,6 @@ const Config = ({configDirectory, cache, cacheKey = 'yoke:config'}: { configDire
      * Return a config value for the given key. Supports dot notation by default.
      */
     get: async (key?: string, separator = '.'): Promise<{ [key: string]: any }> => {
-      const configDirectory = path.resolve(__dirname, '../__tests__/support/config')
       const config = await Config({configDirectory, cache, cacheKey}).load()
 
       if (!key) {

@@ -2,6 +2,7 @@ import Config from './config'
 import path from "path"
 import FileSystemCache from '@yokejs/core-cache/lib/file-system-cache'
 import CoreCache from '@yokejs/core-cache/lib/core-cache'
+import {promises as fsPromises} from 'fs'
 
 describe('Config', () => {
   const configDirectory = path.resolve(__dirname, '../__tests__/support/config')
@@ -99,7 +100,27 @@ describe('Config', () => {
 
       expect(await config.get()).toEqual(expectedConfig)
 
-      // TODO: Write a new file to the test config directory and test reload
+      try {
+        await fsPromises.unlink(`${configDirectory}/new.js`)
+      } catch (e) {
+
+      }
+
+      await fsPromises.writeFile(`${configDirectory}/new.js`, `
+        module.exports = {
+          config: "value"
+        }
+      `)
+
+      expect(await config.reload()).toEqual({
+        ...expectedConfig, ...{
+          "new": {
+            "config": "value"
+          }
+        }
+      })
+
+      await fsPromises.unlink(`${configDirectory}/new.js`)
     })
   })
 })

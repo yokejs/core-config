@@ -1,6 +1,8 @@
 {
   "name": "@yokejs/core-config",
   "version": "0.0.1",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "license": "MIT",
   "private": false,
   "authors": [
@@ -9,8 +11,9 @@
     }
   ],
   "scripts": {
-    "build": "tsc",
-    "test": "jest"
+    "build": "rm -rf lib/ && tsc",
+    "test": "jest",
+    "prepublish": "yarn build"
   },
   "engines": {
     "node": "12"

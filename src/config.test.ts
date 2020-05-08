@@ -1,7 +1,7 @@
 import Config from './config'
 import path from 'path'
-import { promises as fsPromises } from 'fs'
 import CoreCache, { FileSystemCache } from '@yokejs/core-cache'
+import { promises as fsPromises } from 'fs'
 
 describe('Config', () => {
   const configDirectory = path.resolve(__dirname, '../__tests__/support/config')
@@ -64,44 +64,18 @@ describe('Config', () => {
 
       expect(await config.get('some.key.which.does.not.exist')).toBeNull()
     })
-  })
 
-  describe('load', () => {
-    it('throws an error if the config path cannot be found', async () => {
+    it('returns the default value if the key provided does not exist', async () => {
       expect.assertions(1)
-
-      try {
-        await Config({
-          configDirectory: 'some/path/which/does/not/exist/config',
-        }).load()
-      } catch (e) {
-        expect(e.message).toEqual(
-          'Config directory "some/path/which/does/not/exist/config" does not exist.',
-        )
-      }
-    })
-
-    it('returns a merged config by recursively loading files starting at the given configDirectory', async () => {
-      expect.assertions(1)
-
-      expect(await config.load()).toEqual(expectedConfig)
-    })
-
-    it('saves the loaded config to cache if cache provided', async () => {
-      expect.assertions(2)
 
       expect(
-        await Config({ configDirectory, cache: fileSystemCache }).load(),
-      ).toEqual(expectedConfig)
-
-      expect(await fileSystemCache.get('yoke:config')).toEqual(expectedConfig)
+        await config.get('some.key.which.does.not.exist', 'defaultValue'),
+      ).toEqual('defaultValue')
     })
   })
 
-  describe('reload', () => {
-    it('flushes the config from cache and reloads', async () => {
-      await config.load()
-
+  describe('flush', () => {
+    it('flushes the config from the cache', async () => {
       expect(await config.get()).toEqual(expectedConfig)
 
       try {
@@ -117,13 +91,13 @@ describe('Config', () => {
       `,
       )
 
-      expect(await config.reload()).toEqual({
+      expect(await config.get()).toEqual(expectedConfig)
+
+      await config.flush()
+
+      expect(await config.get()).toEqual({
         ...expectedConfig,
-        ...{
-          new: {
-            config: 'value',
-          },
-        },
+        ...{ new: { config: 'value' } },
       })
 
       await fsPromises.unlink(`${configDirectory}/new.js`)

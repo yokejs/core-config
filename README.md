@@ -76,6 +76,40 @@ const config = Config({ configDirectory })
 ...
 
 const entireConfig = await config.get()
+
+console.log(JSON.stringify(entireConfig))
+
+```
+
+Outputs:
+
+```
+{
+    cache: {
+      redis: {
+        cluster: true,
+        default: {
+          host: '127.0.0.1',
+          port: 6379,
+        },
+      },
+    },
+    app: {
+      name: 'My application',
+      env: 'local',
+    },
+    database: {
+      connections: {
+        default: {
+          driver: 'pg',
+          database: 'my-database',
+          username: 'my-username',
+          password: 'my-password',
+          port: 5229,
+        },
+      },
+    },
+}
 ```
 
 ### Fetching a single config value
@@ -84,11 +118,35 @@ const entireConfig = await config.get()
 // Initialise the config as instructed above
 
 ...
-
 const appName = await config.get('app.name')
+
+console.log(appName)
+// Outputs: My application
+```
+
+### Fetching a single config value and falling back to a default value
+
+```
+// Initialise the config as instructed above
+
+...
+const appName = await config.get('a.key.that.does.not.exist', 'My application')
+
+console.log(appName)
+// Outputs: My application
+```
+
+### Invalidating the config cache
+
+```
+// Initialise the config as instructed above
+
+...
+
+await config.flush()
 ```
 
 ## License
 
-Yoke.js Cache is open-sourced software licensed under the
+Yoke.js Config is open-sourced software licensed under the
 [MIT](https://opensource.org/licenses/MIT) License.

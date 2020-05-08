@@ -2,6 +2,94 @@ import fs, { promises as fsPromises } from 'fs'
 import path from 'path'
 import { IYokeCache } from '@yokejs/core-cache'
 
+const Config = ({
+  configDirectory,
+  cache,
+  cacheKey = 'yoke:config',
+}: {
+  configDirectory: string
+  cache?: IYokeCache
+  cacheKey?: string
+}) => {
+  /**
+   * Load and return a merged config object from the files in the given configDirectory.
+   *
+   * The config is cached if cache is provided.
+   */
+  const load = async (): Promise<{ [key: string]: any }> => {
+    if (cache) {
+      try {
+        const cachedConfig = await cache.get(cacheKey)
+
+        if (cachedConfig) {
+          return cachedConfig
+        }
+      } catch (e) {}
+    }
+
+    if (!fs.existsSync(configDirectory)) {
+      throw new Error(`Config directory "${configDirectory}" does not exist.`)
+    }
+
+    const config = await readConfigPath(configDirectory)
+
+    if (cache) {
+      await cache.set(cacheKey, config)
+    }
+
+    return config
+  }
+
+  return {
+    /**
+     * Return a config value for the given key or the entire config if not provided.
+     *
+     * Supports dot notation by default.
+     */
+    get: async (
+      key?: string,
+      defaultValue?: any,
+      separator: string = '.',
+    ): Promise<{ [key: string]: any } | any> => {
+      const config = await load()
+
+      if (!key) {
+        return config
+      }
+
+      let keyExists = false
+      const value = key.split(separator).reduce((o, i: string) => {
+        if (!!o && i in o) {
+          keyExists = true
+          // @ts-ignore
+          return o[i]
+        }
+
+        return null
+      }, config)
+
+      if (keyExists) {
+        return value
+      }
+
+      if (defaultValue) {
+        return defaultValue
+      }
+
+      return null
+    },
+
+    /**
+     * Flushes the config from the cache.
+     */
+    flush: async (): Promise<void> => {
+      if (cache) {
+        await cache?.flush()
+      }
+    },
+  }
+}
+
 /**
  * Recursively read all config files in the given configDirectory and return a merged config object.
  */
@@ -48,80 +136,6 @@ const readConfigPath = async (
 
     return { ...previous, ...newConfig }
   }, Promise.resolve({}))
-}
-
-const Config = ({
-  configDirectory,
-  cache,
-  cacheKey = 'yoke:config',
-}: {
-  configDirectory: string
-  cache?: IYokeCache
-  cacheKey?: string
-}) => {
-  return {
-    /**
-     * Load and return a merged config object from the files in the given configDirectory.
-     *
-     * The config is cached if cache is provided.
-     */
-    load: async (): Promise<{ [key: string]: any }> => {
-      if (cache) {
-        try {
-          const cachedConfig = await cache.get(cacheKey)
-
-          if (cachedConfig) {
-            return cachedConfig
-          }
-        } catch (e) {}
-      }
-
-      if (!fs.existsSync(configDirectory)) {
-        throw new Error(`Config directory "${configDirectory}" does not exist.`)
-      }
-
-      const config = await readConfigPath(configDirectory)
-
-      if (cache) {
-        await cache.set(cacheKey, config)
-      }
-
-      return config
-    },
-
-    /**
-     * Return a config value for the given key. Supports dot notation by default.
-     */
-    get: async (
-      key?: string,
-      separator = '.',
-    ): Promise<{ [key: string]: any }> => {
-      const config = await Config({ configDirectory, cache, cacheKey }).load()
-
-      if (!key) {
-        return config
-      }
-
-      return key.split(separator).reduce((o, i) => {
-        if (!!o && i in o) {
-          return o[i]
-        }
-
-        return null
-      }, config)
-    },
-
-    /**
-     * Flushes the config from cache and reloads.
-     */
-    reload: async (): Promise<{ [key: string]: any }> => {
-      if (cache) {
-        await cache?.flush()
-      }
-
-      return Config({ configDirectory, cache, cacheKey }).load()
-    },
-  }
 }
 
 export default Config

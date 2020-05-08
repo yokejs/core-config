@@ -1,6 +1,6 @@
-import {IYokeCache} from '@yokejs/core-cache/lib/cache-manager'
 import fs, {promises as fsPromises} from "fs"
 import path from "path"
+import {IYokeCache} from '@yokejs/core-cache'
 
 /**
  * Recursively read all config files in the given configDirectory and return a merged config object.

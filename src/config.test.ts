@@ -1,8 +1,7 @@
 import Config from './config'
 import path from "path"
-import FileSystemCache from '@yokejs/core-cache/lib/file-system-cache'
-import CoreCache from '@yokejs/core-cache/lib/core-cache'
 import {promises as fsPromises} from 'fs'
+import CoreCache, {FileSystemCache} from '@yokejs/core-cache'
 
 describe('Config', () => {
   const configDirectory = path.resolve(__dirname, '../__tests__/support/config')

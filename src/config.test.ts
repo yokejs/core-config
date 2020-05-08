@@ -92,4 +92,14 @@ describe('Config', () => {
       expect(await fileSystemCache.get('yoke:config')).toEqual(expectedConfig)
     })
   })
+
+  describe('reload', () => {
+    it('flushes the config from cache and reloads', async () => {
+      await config.load()
+
+      expect(await config.get()).toEqual(expectedConfig)
+
+      // TODO: Write a new file to the test config directory and test reload
+    })
+  })
 })

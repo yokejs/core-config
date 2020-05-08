@@ -87,6 +87,17 @@ const Config = ({configDirectory, cache, cacheKey = 'yoke:config'}: { configDire
 
         return null
       }, config)
+    },
+
+    /**
+     * Flushes the config from cache and reloads.
+     */
+    reload: async (): Promise<{ [key: string]: any }> => {
+      if (cache) {
+        await cache?.flush()
+      }
+
+      return Config({configDirectory, cache, cacheKey}).load()
     }
   }
 }

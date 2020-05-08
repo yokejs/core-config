@@ -1,114 +1,111 @@
-import Config from "./config";
-import path from "path";
-import { promises as fsPromises } from "fs";
-import CoreCache, { FileSystemCache } from "@yokejs/core-cache";
+import Config from './config'
+import path from 'path'
+import { promises as fsPromises } from 'fs'
+import CoreCache, { FileSystemCache } from '@yokejs/core-cache'
 
-describe("Config", () => {
-  const configDirectory = path.resolve(
-    __dirname,
-    "../__tests__/support/config"
-  );
-  const cacheDirectory = path.resolve(__dirname, "../__tests__/support/cache");
+describe('Config', () => {
+  const configDirectory = path.resolve(__dirname, '../__tests__/support/config')
+  const cacheDirectory = path.resolve(__dirname, '../__tests__/support/cache')
   const fileSystemCache = FileSystemCache({
     directory: cacheDirectory,
     core: CoreCache(),
-  });
-  const config = Config({ configDirectory, cache: fileSystemCache });
+  })
+  const config = Config({ configDirectory, cache: fileSystemCache })
 
   const expectedConfig = {
     cache: {
       redis: {
         cluster: true,
         default: {
-          host: "127.0.0.1",
+          host: '127.0.0.1',
           port: 6379,
         },
       },
     },
     app: {
-      name: "My application",
-      env: "local",
+      name: 'My application',
+      env: 'local',
     },
     database: {
       connections: {
         default: {
-          driver: "pg",
-          database: "my-database",
-          username: "my-username",
-          password: "my-password",
+          driver: 'pg',
+          database: 'my-database',
+          username: 'my-username',
+          password: 'my-password',
           port: 5229,
         },
       },
     },
-  };
+  }
 
   afterEach(() => {
-    return fileSystemCache.flush();
-  });
+    return fileSystemCache.flush()
+  })
 
-  describe("get", () => {
-    it("returns the full config if no key is provided", async () => {
-      expect.assertions(1);
+  describe('get', () => {
+    it('returns the full config if no key is provided', async () => {
+      expect.assertions(1)
 
-      expect(await config.get()).toEqual(expectedConfig);
-    });
+      expect(await config.get()).toEqual(expectedConfig)
+    })
 
-    it("returns the specific config value if key provided", async () => {
-      expect.assertions(1);
+    it('returns the specific config value if key provided', async () => {
+      expect.assertions(1)
 
-      expect(await config.get("cache.redis.default")).toEqual({
-        host: "127.0.0.1",
+      expect(await config.get('cache.redis.default')).toEqual({
+        host: '127.0.0.1',
         port: 6379,
-      });
-    });
+      })
+    })
 
-    it("returns null if the key provided does not exist", async () => {
-      expect.assertions(1);
+    it('returns null if the key provided does not exist', async () => {
+      expect.assertions(1)
 
-      expect(await config.get("some.key.which.does.not.exist")).toBeNull();
-    });
-  });
+      expect(await config.get('some.key.which.does.not.exist')).toBeNull()
+    })
+  })
 
-  describe("load", () => {
-    it("throws an error if the config path cannot be found", async () => {
-      expect.assertions(1);
+  describe('load', () => {
+    it('throws an error if the config path cannot be found', async () => {
+      expect.assertions(1)
 
       try {
         await Config({
-          configDirectory: "some/path/which/does/not/exist/config",
-        }).load();
+          configDirectory: 'some/path/which/does/not/exist/config',
+        }).load()
       } catch (e) {
         expect(e.message).toEqual(
-          'Config directory "some/path/which/does/not/exist/config" does not exist.'
-        );
+          'Config directory "some/path/which/does/not/exist/config" does not exist.',
+        )
       }
-    });
+    })
 
-    it("returns a merged config by recursively loading files starting at the given configDirectory", async () => {
-      expect.assertions(1);
+    it('returns a merged config by recursively loading files starting at the given configDirectory', async () => {
+      expect.assertions(1)
 
-      expect(await config.load()).toEqual(expectedConfig);
-    });
+      expect(await config.load()).toEqual(expectedConfig)
+    })
 
-    it("saves the loaded config to cache if cache provided", async () => {
-      expect.assertions(2);
+    it('saves the loaded config to cache if cache provided', async () => {
+      expect.assertions(2)
 
       expect(
-        await Config({ configDirectory, cache: fileSystemCache }).load()
-      ).toEqual(expectedConfig);
+        await Config({ configDirectory, cache: fileSystemCache }).load(),
+      ).toEqual(expectedConfig)
 
-      expect(await fileSystemCache.get("yoke:config")).toEqual(expectedConfig);
-    });
-  });
+      expect(await fileSystemCache.get('yoke:config')).toEqual(expectedConfig)
+    })
+  })
 
-  describe("reload", () => {
-    it("flushes the config from cache and reloads", async () => {
-      await config.load();
+  describe('reload', () => {
+    it('flushes the config from cache and reloads', async () => {
+      await config.load()
 
-      expect(await config.get()).toEqual(expectedConfig);
+      expect(await config.get()).toEqual(expectedConfig)
 
       try {
-        await fsPromises.unlink(`${configDirectory}/new.js`);
+        await fsPromises.unlink(`${configDirectory}/new.js`)
       } catch (e) {}
 
       await fsPromises.writeFile(
@@ -117,19 +114,19 @@ describe("Config", () => {
         module.exports = {
           config: "value"
         }
-      `
-      );
+      `,
+      )
 
       expect(await config.reload()).toEqual({
         ...expectedConfig,
         ...{
           new: {
-            config: "value",
+            config: 'value',
           },
         },
-      });
+      })
 
-      await fsPromises.unlink(`${configDirectory}/new.js`);
-    });
-  });
-});
+      await fsPromises.unlink(`${configDirectory}/new.js`)
+    })
+  })
+})

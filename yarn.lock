@@ -613,10 +613,10 @@
     semver "^6.3.0"
     tsutils "^3.17.1"
 
-"@yokejs/core-cache@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@yokejs/core-cache/-/core-cache-0.0.1.tgz#3fe34f7cdd9bec3769b9ded3cec4d91700534666"
-  integrity sha512-2tKEyhAF8DMoB2bPM+TgEMwK8M+DSUMaBKLA2nMnVKTROoFVnqSjwxqSD2znblEMxQ6xKf6KW1l/XnqHiSUPOQ==
+"@yokejs/core-cache@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@yokejs/core-cache/-/core-cache-0.0.5.tgz#e2163a44bad7a0adc4230355b6f96ba5707cd11a"
+  integrity sha512-KnTeaoWQoXiJ3Tv6fWP4VeimpVbo+JTB+/IWtokGVrhv77GQNckwfzgEyNKMdS2Nqpb/U9ajs3cBDYSlZCu+Rg==
 
 abab@^2.0.0:
   version "2.0.3"

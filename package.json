@@ -37,7 +37,9 @@
   },
   "engineStrict": false,
   "dependencies": {
-    "@yokejs/core-cache": "^0.0.5"
+    "@types/redis": "^2.8.20",
+    "@yokejs/core-cache": "^0.0.5",
+    "redis": "^3.0.2"
   },
   "devDependencies": {
     "@types/jest": "^25.2.1",

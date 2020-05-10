@@ -1,3 +1,5 @@
+![CI](https://github.com/yokejs/core-config/workflows/CI/badge.svg)
+
 # [Yoke.js Config](https://github.com/yokejs/core-config)
 
 Yoke.js Config is a simple Node.js filesystem config manager.

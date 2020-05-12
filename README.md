@@ -47,18 +47,19 @@ You can view a full example [here](/example) with config keys and values.
 ### Initialising the config with the filesystem cache (recommended)
 
 ```
-import CoreCache, {FileSystemCache} from '@yokejs/core-cache'
+import Cache, {FileSystemCache} from '@yokejs/core-cache'
 import Config from '@yokejs/core-config'
 
 const configDirectory = path.resolve(__dirname, './config')
 const cacheDirectory = path.resolve(__dirname, './cache')
 
-const fileSystemCache = FileSystemCache({
-  directory: cacheDirectory,
-  core: CoreCache(),
-});
+const cache = Cache(
+  FileSystemCache({
+    directory: cacheDirectory,
+  }),
+)
 
-const config = Config({ configDirectory, cache: fileSystemCache })
+const config = Config({ configDirectory, cache })
 ```
 
 ### Initialising the config without caching

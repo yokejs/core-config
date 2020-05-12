@@ -1,16 +1,18 @@
 import Config from './config'
 import path from 'path'
-import CoreCache, { FileSystemCache } from '@yokejs/core-cache'
+import Cache, { FileSystemCache } from '@yokejs/core-cache'
 import { promises as fsPromises } from 'fs'
 
 describe('Config', () => {
   const configDirectory = path.resolve(__dirname, '../__tests__/support/config')
   const cacheDirectory = path.resolve(__dirname, '../__tests__/support/cache')
-  const fileSystemCache = FileSystemCache({
-    directory: cacheDirectory,
-    core: CoreCache(),
-  })
-  const config = Config({ configDirectory, cache: fileSystemCache })
+  const cache = Cache(
+    FileSystemCache({
+      directory: cacheDirectory,
+    }),
+  )
+
+  const config = Config({ configDirectory, cache })
 
   const expectedConfig = {
     cache: {
@@ -40,7 +42,7 @@ describe('Config', () => {
   }
 
   afterEach(() => {
-    return fileSystemCache.flush()
+    return cache.flush()
   })
 
   describe('get', () => {
